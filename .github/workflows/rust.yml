@@ -1,8 +1,10 @@
-name: Rust
+name: Rust Multi-Platform Release
 
 on:
   push:
     branches: [ "main" ]
+    tags-ignore:
+      - 'v*'
   pull_request:
     branches: [ "main" ]
 
@@ -10,13 +12,98 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  # 多平台构建
   build:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: your-project-name
+            asset_name: your-project-name-linux-x86_64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: your-project-name.exe
+            asset_name: your-project-name-windows-x86_64.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: your-project-name
+            asset_name: your-project-name-macos-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: your-project-name
+            asset_name: your-project-name-macos-aarch64
+    
+    runs-on: ${{ matrix.os }}
+    
     steps:
     - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
+    
+    # 安装 Rust target
+    - name: Install Rust target
+      run: rustup target add ${{ matrix.target }}
+    
+    - name: Cache cargo
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: Build for ${{ matrix.target }}
+      run: cargo build --release --target ${{ matrix.target }} --verbose
+    
+    # 打包产物
+    - name: Package artifacts
+      run: |
+        mkdir -p artifacts
+        cp target/${{ matrix.target }}/release/${{ matrix.artifact_name }} artifacts/${{ matrix.asset_name }}
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.asset_name }}
+        path: artifacts/${{ matrix.asset_name }}
+
+  # 运行测试
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
     - name: Run tests
       run: cargo test --verbose
+
+  # 创建 Release
+  release:
+    needs: [build, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Get version
+      id: get_version
+      run: |
+        VERSION=$(cargo pkgid | cut -d# -f2 | cut -d@ -f2)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: all-artifacts/
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: v${{ env.VERSION }}
+        tag_name: v${{ env.VERSION }}
+        generate_release_notes: true
+        files: all-artifacts/**/*
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
