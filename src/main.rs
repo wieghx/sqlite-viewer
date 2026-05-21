@@ -383,7 +383,7 @@ impl eframe::App for SQLiteViewer {
                     ui.horizontal(|ui| {
                         for (i, c) in column_names.iter().enumerate() {
                             let w = widths[i].max(8);
-                            let txt = format!("{: <w$}", c, w = w);
+                            let txt = format!("{:^w$}", c, w = w);
                             ui.label(egui::RichText::new(txt).strong().monospace().size(12.0));
                             ui.add_space(3.0);
                         }
@@ -395,7 +395,7 @@ impl eframe::App for SQLiteViewer {
                         ui.horizontal(|ui| {
                             for (cidx, cell) in row.iter().enumerate() {
                                 let w = if cidx < widths.len() { widths[cidx].max(8) } else { 8 };
-                                let txt = format!("{: <w$}", cell, w = w);
+                                let txt = format!("{:^w$}", cell, w = w);
                                 let label = egui::Label::new(egui::RichText::new(txt).monospace().size(11.0))
                                     .sense(egui::Sense::click());
                                 let resp = ui.add(label).on_hover_text("Click to inspect full value / hex dump");
