@@ -1,0 +1,10 @@
+[package]
+name = "sqlite-viewer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+egui = "0.33"
+eframe = "0.33"
+rusqlite = { version = "0.39", features = ["bundled"] }
+rfd = "0.16"

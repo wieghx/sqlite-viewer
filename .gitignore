@@ -1,0 +1,9 @@
+/target/
+!**/.cargo-ok
+Cargo.lock
+!Cargo.toml
+**/*.rs.bk
+*.pdb
+.DS_Store
+*.log
+Thumbs.db
