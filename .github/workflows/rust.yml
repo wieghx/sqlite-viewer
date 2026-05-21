@@ -19,20 +19,20 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact_name: your-project-name
-            asset_name: your-project-name-linux-x86_64
+            artifact_name: sqlite-viewer
+            asset_name: sqlite-viewer-linux-x86_64
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact_name: your-project-name.exe
-            asset_name: your-project-name-windows-x86_64.exe
+            artifact_name: sqlite-viewer.exe
+            asset_name: sqlite-viewer-windows-x86_64.exe
           - os: macos-latest
             target: x86_64-apple-darwin
-            artifact_name: your-project-name
-            asset_name: your-project-name-macos-x86_64
+            artifact_name: sqlite-viewer
+            asset_name: sqlite-viewer-macos-x86_64
           - os: macos-latest
             target: aarch64-apple-darwin
-            artifact_name: your-project-name
-            asset_name: your-project-name-macos-aarch64
+            artifact_name: sqlite-viewer
+            asset_name: sqlite-viewer-macos-aarch64
     
     runs-on: ${{ matrix.os }}
     
