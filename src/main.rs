@@ -207,8 +207,8 @@ impl SQLiteViewer {
 }
 
 impl eframe::App for SQLiteViewer {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::TopBottomPanel::top("top_panel").show_inside(ui, |ui| {
             ui.horizontal(|ui| {
                 ui.heading("SQLite Viewer");
                 if ui.button("📂 Open Database").clicked() {
@@ -254,8 +254,8 @@ impl eframe::App for SQLiteViewer {
 
         egui::SidePanel::left("tables_panel")
             .resizable(true)
-            .default_width(220.0)
-            .show(ctx, |ui| {
+            .default_size(220.0)
+            .show_inside(ui, |ui| {
                 ui.heading("Tables");
                 ui.separator();
 
@@ -279,7 +279,7 @@ impl eframe::App for SQLiteViewer {
                 });
             });
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show_inside(ui, |ui| {
             ui.heading("Data");
 
             let has_db = self.app_state.current_db.borrow().is_some();
@@ -437,7 +437,7 @@ impl eframe::App for SQLiteViewer {
                     .resizable(true)
                     .default_width(720.0)
                     .default_height(440.0)
-                    .show(ctx, |ui| {
+                    .show(ui.ctx(), |ui| {
                         ui.label(egui::RichText::new("Full value (TEXT) or hex+ASCII dump (BLOB, first 4 KiB)").size(10.0).italics());
                         egui::ScrollArea::vertical().max_height(340.0).show(ui, |ui| {
                             ui.monospace(&content);
@@ -457,7 +457,7 @@ impl eframe::App for SQLiteViewer {
             }
         }
 
-        egui::TopBottomPanel::bottom("status_panel").show(ctx, |ui| {
+        egui::TopBottomPanel::bottom("status_panel").show_inside(ui, |ui| {
             ui.horizontal(|ui| {
                 if self.app_state.current_db.borrow().is_some() {
                     ui.label("✅ Database connected");
