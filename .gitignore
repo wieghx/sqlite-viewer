@@ -1,5 +1,6 @@
 /target/
 !**/.cargo-ok
+/**/dist/
 Cargo.lock
 !Cargo.toml
 **/*.rs.bk

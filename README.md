@@ -16,7 +16,6 @@ A lightweight cross-platform SQLite database viewer written in Rust using egui +
 ## Building
 
 ```bash
-cd sqlite-viewer
 cargo build --release
 # binary at target/release/sqlite-viewer
 ```
@@ -24,11 +23,14 @@ cargo build --release
 ## Running
 
 ```bash
-# GUI with open button
-./target/release/sqlite-viewer
+# From source (development)
+cargo run
+
+# From release binary
+./dist/sqlite-viewer
 
 # Directly open a database
-./target/release/sqlite-viewer /home/user/data/mydb.sqlite3
+./dist/sqlite-viewer /home/user/data/mydb.sqlite3
 ```
 
 On first run, use the "📂 Open Database" button in the top bar.
